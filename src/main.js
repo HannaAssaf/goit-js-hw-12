@@ -1,16 +1,25 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import { showImg } from './js/pixabay-api.js';
-import { clearGallery, createElement } from './js/render-functions.js';
-const iconError = new URL('./img/bi_x-octagon.svg', import.meta.url).href;
+import {
+  clearGallery,
+  createElement,
+  appendElements,
+} from './js/render-functions.js';
+import iconError from './img/bi_x-octagon.svg';
 
 const form = document.querySelector('.form');
 const input = document.querySelector('.input');
 const loader = document.querySelector('.loader');
+const loadMoreBtn = document.querySelector('.load-more');
 
-form.addEventListener('submit', event => {
+let page = 1;
+const perPage = 15;
+let query = '';
+
+form.addEventListener('submit', async event => {
   event.preventDefault();
-  const query = input.value.trim();
+  query = input.value.trim();
 
   if (!query) {
     clearGallery();
@@ -25,38 +34,97 @@ form.addEventListener('submit', event => {
     return;
   }
 
+  page = 1;
   clearGallery();
   loader.classList.remove('hidden');
+  loadMoreBtn.classList.add('hidden');
 
-  showImg(query)
-    .then(hits => {
-      if (hits.length === 0) {
-        iziToast.show({
-          message:
-            'Sorry, there are no images matching your search query. Please try again!',
-          messageColor: '#FFFFFF',
-          position: 'topRight',
-          color: '#ef4040',
-          timeout: 3000,
-          iconUrl: './img/bi_x-octagon.svg',
-        });
-      } else {
-        createElement(hits);
-      }
-    })
-    .catch(error => {
+  try {
+    const data = await showImg(query, page, perPage);
+    const { hits, totalHits } = data;
+
+    if (hits.length === 0) {
       iziToast.show({
-        title: 'Error',
-        message: error.message || 'An unexpected error occurred',
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
         messageColor: '#FFFFFF',
         position: 'topRight',
         color: '#ef4040',
         timeout: 3000,
-        iconUrl: './img/bi_x-octagon.svg',
+        iconUrl: iconError,
       });
-    })
-    .finally(() => {
-      loader.classList.add('hidden');
-      form.reset();
+    } else {
+      createElement(hits);
+      if (page * perPage < totalHits) {
+        loadMoreBtn.classList.remove('hidden');
+      } else {
+        loadMoreBtn.classList.add('hidden');
+        iziToast.show({
+          message: "We're sorry, but you've reached the end of search results",
+          messageColor: '#FFFFFF',
+          position: 'topRight',
+          color: '#ef4040',
+          timeout: 3000,
+          iconUrl: iconError,
+        });
+      }
+    }
+  } catch (error) {
+    iziToast.show({
+      title: 'Error',
+      message: error.message || 'An unexpected error occurred',
+      messageColor: '#FFFFFF',
+      position: 'topRight',
+      color: '#ef4040',
+      timeout: 3000,
+      iconUrl: iconError,
     });
+  } finally {
+    loader.classList.add('hidden');
+    form.reset();
+  }
+});
+
+loadMoreBtn.addEventListener('click', async () => {
+  loadMoreBtn.classList.add('hidden');
+  loader.classList.remove('hidden');
+  try {
+    page += 1;
+    const data = await showImg(query, page, perPage);
+    const { hits, totalHits } = data;
+    appendElements(hits);
+
+    const cardHeight = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect().height;
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+
+    if (page * perPage < totalHits) {
+      loadMoreBtn.classList.remove('hidden');
+    } else {
+      iziToast.show({
+        message: "We're sorry, but you've reached the end of search results",
+        messageColor: '#FFFFFF',
+        position: 'topRight',
+        color: '#ef4040',
+        timeout: 3000,
+        iconUrl: iconError,
+      });
+    }
+  } catch (error) {
+    iziToast.show({
+      title: 'Error',
+      message: error.message || 'An unexpected error occurred',
+      messageColor: '#FFFFFF',
+      position: 'topRight',
+      color: '#ef4040',
+      timeout: 3000,
+      iconUrl: iconError,
+    });
+  } finally {
+    loader.classList.add('hidden');
+  }
 });

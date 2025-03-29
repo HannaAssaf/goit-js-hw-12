@@ -3,15 +3,17 @@ import axios from 'axios';
 const KEY = '49529656-94d7c85de64fba179c64deed7';
 const URL = 'https://pixabay.com/api/';
 
-export function showImg(query) {
+export async function showImg(query, page = 1, per_page = 15) {
   const params = {
     key: KEY,
     q: query,
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: true,
-    per_page: 9,
+    per_page,
+    page,
   };
 
-  return axios.get(URL, { params }).then(response => response.data.hits);
+  const response = await axios.get(URL, { params });
+  return response.data;
 }

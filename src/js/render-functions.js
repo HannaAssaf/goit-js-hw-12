@@ -40,6 +40,31 @@ export function createElement(hits) {
   lightbox.refresh();
 }
 
+export function appendElements(hits) {
+  const gallery = document.querySelector('.gallery');
+  const markup = hits
+    .map(hit => {
+      return `
+        <li class="gallery-item">
+          <a class="gallery-link" href="${hit.largeImageURL}">
+            <img class="gallery-image" src="${hit.webformatURL}" alt="${
+        hit.tags
+      }" />
+          </a>
+          <ul class="text-ul">
+            ${createTextBlockHTML('Likes', hit.likes)}
+            ${createTextBlockHTML('Views', hit.views)}
+            ${createTextBlockHTML('Comments', hit.comments)}
+            ${createTextBlockHTML('Downloads', hit.downloads)}
+          </ul>
+        </li>
+      `;
+    })
+    .join('');
+  gallery.insertAdjacentHTML('beforeend', markup);
+  lightbox.refresh();
+}
+
 export function clearGallery() {
   const gallery = document.querySelector('.gallery');
   gallery.innerHTML = '';
