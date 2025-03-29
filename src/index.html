@@ -2,22 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vanilla App Template</title>
+    <title>GoIT-JS-HW-12</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
+
   <body>
-    <load src="./partials/header.html" icon-path="img/sprite.svg#logo" />
-
     <main>
-      <!-- Loads the specified .html file -->
-      <load src="./partials/vite-promo.html" />
-      <load src="./partials/badges.html" />
+      <section>
+        <form class="form">
+          <input class="input" type="text" placeholder="Search images..." />
+          <button class="button" type="submit">Search</button>
+        </form>
+
+        <ul class="gallery"></ul>
+      </section>
     </main>
-
-    <load src="./partials/footer.html" />
-
+    <span class="loader hidden"></span>
     <script type="module" src="./main.js"></script>
   </body>
 </html>
