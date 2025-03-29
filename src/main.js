@@ -2,6 +2,7 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import { showImg } from './js/pixabay-api.js';
 import { clearGallery, createElement } from './js/render-functions.js';
+import iconError from './img/bi_x-octagon.svg';
 
 const form = document.querySelector('.form');
 const input = document.querySelector('.input');
@@ -19,7 +20,7 @@ form.addEventListener('submit', event => {
       position: 'topRight',
       color: '#ef4040',
       timeout: 3000,
-      iconUrl: './img/bi_x-octagon.svg',
+      iconUrl: iconError,
     });
     return;
   }
