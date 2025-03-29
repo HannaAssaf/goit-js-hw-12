@@ -149,7 +149,7 @@ main {
   width: 64px;
   height: 64px;
   position: fixed;
-  top: 95%;
+  top: 98%;
   left: 50%;
   transform: translate(-50%, -50%);
   animation: rotate 1.5s ease-in infinite alternate;
